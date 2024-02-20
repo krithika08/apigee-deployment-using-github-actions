@@ -1,17 +1,3 @@
-# Copyright 2022 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 name: proxy-ci
 
 on:
@@ -33,19 +19,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # You may need to replace the following steps with actual authentication details
       - name: Authenticate
         run: echo "Authentication step"
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.3.0
 
-      - name: Create API bundle
-        run: zip -r proxy.zip apiproxy
+      - name: Build Docker Image
+        run: docker build -t your-docker-image-name .
 
-      - name: Upload API Proxy Bundle
-        id: upload
-        run: echo "::set-output name=apigee-revision::123"  # Replace with actual revision value
+      - name: Tag Docker Image
+        run: docker tag your-docker-image-name gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-docker-image-name:latest
 
-      - name: Deploy Revision
-        run: echo "Deploying revision"
+      - name: Authenticate to Google Cloud
+        run: gcloud auth configure-docker
+
+      - name: Push Docker Image to Google Container Registry
+        run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/your-docker-image-name:latest
+
+      - name: Deploy Apigee Proxy
+        run: |
+          # Add commands to deploy Apigee proxy here
+          # Example: apigeetool deployproxy ...
+

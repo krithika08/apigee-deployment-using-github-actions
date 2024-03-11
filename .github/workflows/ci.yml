@@ -17,7 +17,7 @@ name: proxy-ci
 on:
   push:
     branches:
-      - 'main'
+      - main
     paths:
       - '.github/workflows/ci.yaml'
       - 'src/**'
